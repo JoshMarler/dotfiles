@@ -32,6 +32,11 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 
+"General Key Mappings
+nnoremap tl :tabnext<CR>
+nnoremap th :tabprevious<CR>
+nnoremap tc :tabclose<CR>
+
 "Nvim terminal settings
 
 "Set escape key mapping to exit terminal
@@ -45,7 +50,7 @@ map <F5> :e %:p:s,.h$,.X123X, :s,.cpp$,.h:s,.X123X$,.cpp,<CR>
 
 "Nerd Tree Settings
 autocmd vimenter * NERDTree
-map <C-n> :NerdTreeToggle<CR>
+map nt :NERDTree<CR>
 
 "YCM Settings
 let g:ycm_autoclose_preview_window_after_insertion = 1
