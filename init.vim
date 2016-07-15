@@ -10,6 +10,7 @@ endif
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdcommenter'
 Plug 'Valloric/YouCompleteMe'
 Plug 'flazz/vim-colorschemes'
 Plug 'vim-airline/vim-airline'
@@ -51,6 +52,15 @@ map <F5> :e %:p:s,.h$,.X123X, :s,.cpp$,.h:s,.X123X$,.cpp,<CR>
 "Nerd Tree Settings
 autocmd vimenter * NERDTree
 map nt :NERDTree<CR>
+
+"Nerd Commenter Settings
+filetype plugin on
+let g:NERDSpaceDelims = 1
+let g:NERDCompactSexyComs = 0
+let g:NERDDefaultAlign = 'left'
+let g:NERDCustomDelimiters = {'cpp': {'left': '/**', 'right': '*/'}}
+let g:NERDTrimTrailingWhiteSpace = 1
+let g:NERDCommentEmptyLines = 0
 
 "YCM Settings
 let g:ycm_autoclose_preview_window_after_insertion = 1
