@@ -44,7 +44,7 @@ nnoremap tc :tabclose<CR>
 :tnoremap <Esc> <C-\><C-n>
 
 "Appearance/Display
-set background=dark
+set bg=dark
 colorscheme solarized
 
 map <F5> :e %:p:s,.h$,.X123X, :s,.cpp$,.h:s,.X123X$,.cpp,<CR>
