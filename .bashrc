@@ -117,6 +117,10 @@ if ! shopt -oq posix; then
 fi
 
 #JWM - Personal Settings
-export CC=/usr/bin/clang
-export CXX=/usr/bin/clang++
-#export LD_LIBRARY_PATH=/usr/local/
+export CC=/usr/bin/gcc
+export CXX=/usr/bin/g++
+export LIBRARY_PATH=/usr/lib
+export LD_LIBRARY_PATH=/usr/lib
+
+export NVM_DIR="/home/joshua/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
