@@ -17,6 +17,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'Valloric/YouCompleteMe'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'rking/ag.vim'
 
 call plug#end()
 
@@ -40,7 +41,7 @@ nnoremap tc :tabclose<CR>
 
 "Appearance/Display
 set bg=dark
-colorscheme solarized
+colorscheme badwolf
 
 "Cursor Appearance
 if has("autocmd")
@@ -57,8 +58,10 @@ endif
 map <F5> :e %:p:s,.h$,.X123X, :s,.cpp$,.h:s,.X123X$,.cpp,<CR>
 
 "Nerd Tree Settings
-autocmd vimenter * NERDTree
 map nt :NERDTree<CR>
+
+"For Airline
+set laststatus=2
 
 "Nerd Commenter Settings
 filetype plugin on
@@ -75,6 +78,27 @@ let g:ycm_global_ycm_extra_conf = '~/dotfiles/.ycm_extra_conf.py'
 let g:ycm_auto_trigger = 0
 let g:ycm_collect_identifiers_from_tags_files = 1
 
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+    set grepprg=ag\ --nogroup\ --nocolor
+
+      " Use ag in CtrlP for listing files. Lightning fast and respects
+      " .gitignore
+        let g:ctrlp_user_command = 'ag %s -l -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+    let g:ctrlp_use_caching = 0
+endif
+
+" bind K to grep word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlPBuffer'
+
+" auto close quickfix window after selecting an item
+:autocmd FileType qf nnoremap <buffer> <CR> <CR>:cclose<CR>
 
 
 

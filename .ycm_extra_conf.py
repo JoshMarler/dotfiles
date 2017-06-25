@@ -41,8 +41,9 @@ flags = [
     '-isystem', '/usr/bin/../lib/gcc/x86_64-linux-gnu/5.3.1/../../../../include/x86_64-linux-gnu/c++/5.3.1/',
     '-isystem', '/usr/bin/../lib/gcc/x86_64-linux-gnu/5.3.1/../../../../include/c++/5.3.1/backward/',
     '-isystem', '/usr/include/x86_64-linux-gnu/', 
-    '-isystem', '/usr/include',   
+    '-I', '/usr/include',   
     '-I', '/usr/local/include',
+    # '-I', '/home/joshua/Development/transversal'
     '-ISUB', '/home/joshua/Development/transversal'
 ]
 
@@ -71,7 +72,8 @@ def Subdirectories(directory):
   for path, subdirs, files in os.walk(directory):
     for name in subdirs:
       item = os.path.join(path, name)
-      res.append(item)
+      if item.find("src") == -1:
+        res.append(item)
   return res
 
 def IncludeFlagsOfSubdirectory( flags, working_directory ):

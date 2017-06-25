@@ -122,5 +122,4 @@ export CXX=/usr/bin/g++
 export LIBRARY_PATH=/usr/lib
 export LD_LIBRARY_PATH=/usr/lib
 
-export NVM_DIR="/home/joshua/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+export TERM="xterm-256color"
