@@ -17,7 +17,10 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'Valloric/YouCompleteMe'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'rking/ag.vim'
+Plug 'mileszs/ack.vim'
+Plug 'godlygeek/csapprox'
+Plug 'nvie/vim-flake8'
+Plug 'milkypostman/vim-togglelist'
 
 call plug#end()
 
@@ -26,22 +29,45 @@ call plug#end()
 syntax on
 set number
 set showmatch
-set enc=utf-8
-set fenc=utf-8
-set termencoding=utf-8
+set encoding=utf-8
 set autoindent
-set tabstop=4
-set shiftwidth=4
-set expandtab
+set si                  " smartindent
+set cindent             " do c-style indenting
+set tabstop=8           " tab spacing (settings below are just to unify it)
+set softtabstop=8       " unify
+set shiftwidth=2
+set expandtab           " NO tabs please!
+set nowrap              
+set smarttab  
+set hidden
+
+" For quick escape
+set timeoutlen=1000 ttimeoutlen=0
 
 "General Key Mappings
 nnoremap tl :tabnext<CR>
 nnoremap th :tabprevious<CR>
 nnoremap tc :tabclose<CR>
 
-"Appearance/Display
-set bg=dark
-colorscheme badwolf
+" Use escape to clear search highlights
+nnoremap <esc> :noh<return><esc>
+
+" needed so that vim still understands escape sequences
+nnoremap <esc>^[ <esc>^[
+
+" Quick edit and reload vimrc
+nnoremap <leader>ev :split $MYVIMRC<CR>
+nnoremap <leader>vr :source $MYVIMRC<CR>
+
+set t_Co=256
+set background=dark
+colorscheme hybrid
+
+
+
+let g:cpp_class_scope_highlight=1
+let g:cpp_class_decl_highlight=1
+let g:cpp_member_variable_highlight=1
 
 "Cursor Appearance
 if has("autocmd")
@@ -75,62 +101,65 @@ let g:NERDCommentEmptyLines = 0
 "YCM settings
 let g:ycm_autoclose_preview_window_after_insertion = 1   
 let g:ycm_global_ycm_extra_conf = '~/dotfiles/.ycm_extra_conf.py'  
-let g:ycm_auto_trigger = 0
-let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_auto_trigger = 1
+let g:ycm_python_binary_path = '/usr/bin/python3'
+
+nnoremap <leader>g :YcmCompleter GoTo<cr>
+nnoremap <leader>gh :YcmCompleter GoToInclude<cr>
+nnoremap <leader>gd :YcmCompleter GetDoc<cr>
+nnoremap <leader>f :YcmCompleter FixIt<cr>
+nnoremap <leader>re :YcmCompleter FixIt<cr>
 
 " The Silver Searcher
 if executable('ag')
-  " Use ag over grep
-    set grepprg=ag\ --nogroup\ --nocolor
-
+      " Set ack.vim plugin to use ag
+      let g:ackprg = 'ag --vimgrep'
       " Use ag in CtrlP for listing files. Lightning fast and respects
-      " .gitignore
-        let g:ctrlp_user_command = 'ag %s -l -g ""'
+          " .gitignore
+      let g:ctrlp_user_command = 'ag %s -l -g ""'
 
-  " ag is fast enough that CtrlP doesn't need to cache
-    let g:ctrlp_use_caching = 0
+      " ag is fast enough that CtrlP doesn't need to cache
+      let g:ctrlp_use_caching = 0
 endif
 
-" bind K to grep word under cursor
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
-
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlPBuffer'
+" ack.vim settings for use with ag
+" Search current word under cursor
+nnoremap <Leader>a :Ack!<cword><cr>
+nnoremap <Leader>f :Ack!
 
 " auto close quickfix window after selecting an item
 :autocmd FileType qf nnoremap <buffer> <CR> <CR>:cclose<CR>
+      
 
+" CtrlP open in MRU mode by default
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlPMRUFiles'
 
+" CtrlP remaps
+nmap <leader>. <c-p><c-\>f
+nmap <c-b> :CtrlPBuffer<cr>
 
-" "OmniCppComplete Settings
-" map <F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q -f ~/.vim/commontags /usr/include /usr/local/include 
-" set tags+=~/.vim/commontags
+" Python specific settings
+let python_highlight_all=1
+let g:ycm_python_binary_path = '/usr/bin/python3'
 
+"python with virtualenv support
+" py << EOF
+" import os
+" import sys
+" if 'VIRTUAL_ENV' in os.environ:
+"  project_base_dir = os.environ['VIRTUAL_ENV']
+"  activate_this = os.path.join(project_base_dir, 'bin/activate')
+"  execfile(activate_this, dict(__file__=activate_this))
+" EOF
 
-" " -- optional --
-" " auto close options when exiting insert mode or moving away
-" autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-" autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-" set completeopt=menu,menuone
-
-" " -- configs --
-" let OmniCpp_MayCompleteDot = 1 " autocomplete with .
-" let OmniCpp_MayCompleteArrow = 1 " autocomplete with ->
-" let OmniCpp_MayCompleteScope = 1 " autocomplete with ::
-" let OmniCpp_SelectFirstItem = 2 " select first item (but don't insert)
-" let OmniCpp_NamespaceSearch = 2 " search namespaces in this and included files
-" let OmniCpp_ShowPrototypeInAbbr = 1 " show function prototype (i.e.parameters) in popup window
-" let OmniCpp_LocalSearchDecl = 1 " don't require special style of function opening braces
-" let OmniCpp_DisplayMode = 1 " show private and protected members in auto completion
-
-" " Setup the tab key to do autocompletion
-" function! CompleteTab()
-"     let prec = strpart( getline('.'), 0, col('.')-1 )
-"     if prec =~ '^\s*$' || prec =~ '\s$'
-"         return "\"
-"     else
-"         return "\\"
-"     endif
-" endfunction
-
-" map <Tab> :CompleteTab()
+" flak8
+let g:flake8_show_in_gutter=1 
+let g:flake8_error_marker='!!' 
+let g:flake8_warning_marker='>>'
+highlight link Flake8_Error      Error
+highlight link Flake8_Warning    WarningMsg
+highlight link Flake8_Complexity WarningMsg
+highlight link Flake8_Naming     WarningMsg
+highlight link Flake8_PyFlake    WarningMsg
+autocmd BufWritePost *.py call Flake8()
