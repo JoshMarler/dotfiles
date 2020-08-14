@@ -109,22 +109,6 @@ let g:NERDCustomDelimiters = {'cpp': {'left': '/**', 'right': '*/'}}
 let g:NERDTrimTrailingWhiteSpace = 1
 let g:NERDCommentEmptyLines = 0
 
-"YCM settings. 
-let g:ycm_autoclose_preview_window_after_insertion = 1   
-let g:ycm_global_ycm_extra_conf = '~/dotfiles/.ycm_extra_conf.py'  
-let g:ycm_auto_trigger = 1
-let g:ycm_python_binary_path = '/usr/bin/python3'
-
-" Let clangd fully control code completion
- let g:ycm_clangd_uses_ycmd_caching = 0
-" " Use installed clangd, not YCM-bundled clangd which doesn't get updates.
- let g:ycm_clangd_binary_path = exepath("clangd")
-
-nnoremap <leader>g :YcmCompleter GoTo<cr>
-nnoremap <leader>gh :YcmCompleter GoToInclude<cr>
-nnoremap <leader>gd :YcmCompleter GetDoc<cr>
-nnoremap <leader>f :YcmCompleter FixIt<cr>
-
 " The Silver Searcher
 if executable('ag')
       " Set ack.vim plugin to use ag
