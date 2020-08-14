@@ -91,6 +91,8 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias vim='vim.nox'
+alias fcd='__fzf_cd__'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -116,10 +118,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#JWM - Personal Settings
-export CC=/usr/bin/gcc
-export CXX=/usr/bin/g++
-export LIBRARY_PATH=/usr/lib
-export LD_LIBRARY_PATH=/usr/lib
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-export TERM="xterm-256color"
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
