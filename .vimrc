@@ -9,33 +9,46 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
+
+" Airline status bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+" Collection of usable colorschemes
 Plug 'flazz/vim-colorschemes'
-Plug 'godlygeek/csapprox'
 
 " Auto completion
-" Plug 'ycm-core/YouCompleteMe'
+" For C++ ensure latest clangd version is installed.
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Semantic code highlight powered by coc/clangd
-Plug 'jackguo380/vim-lsp-cxx-highlight' 
+
+" coc extensions
+let g:coc_global_extensions = [
+    \'coc-webpack',
+    \'coc-prettier',
+    \'coc-marketplace',
+    \'coc-eslint',
+    \'coc-tsserver',
+    \'coc-sh',
+    \'coc-python',
+    \'coc-omnisharp',
+    \'coc-markdownlint',
+    \'coc-json',
+    \'coc-cmake',
+    \'coc-clangd'
+\]
+
+" Cpp highlight - LSP highlight is currently a mess.
+Plug 'bfrg/vim-cpp-modern'
 
 " Search and fuzzy findings
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mileszs/ack.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 " Git support
 Plug 'tpope/vim-fugitive'
 
-" js
-Plug 'MaxMEllon/vim-jsx-pretty'
-Plug 'pangloss/vim-javascript'
-
-
 call plug#end()
-
 
 "General Settings
 syntax on
@@ -46,25 +59,40 @@ set autoindent
 set si                  " smartindent
 set cindent             " do c-style indenting
 set tabstop=8           " tab spacing (settings below are just to unify it)
-set softtabstop=8       " unify
-set shiftwidth=2
 set expandtab           " NO tabs please!
-set nowrap              
-set smarttab  
+set shiftwidth=4
+set softtabstop=0
+set smarttab
+set nowrap
 set hidden
 set bs=2
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
+
+" Enable GDB in vim
+packadd termdebug
+
+" If he dies, he dies.
+set noswapfile
+
+" Kill trailing whitespace on save.
+autocmd BufWritePre * :%s/\s\+$//e
 
 set splitbelow "Open splits below
 
 " For quick escape
 set timeoutlen=1000 ttimeoutlen=0
 
-"General Key Mappings
+" Tab mappings
 nnoremap tl :tabnext<CR>
 nnoremap th :tabprevious<CR>
 nnoremap tc :tabclose<CR>
+
+" Window mappings
+nnoremap <leader> h :wincmd h<cr>
+nnoremap <leader> j :wincmd j<cr>
+nnoremap <leader> k :wincmd k<cr>
+nnoremap <leader> l :wincmd l<cr>
 
 " Use escape to clear search highlights
 nnoremap <esc> :noh<return><esc>
@@ -76,15 +104,22 @@ nnoremap <esc>^[ <esc>^[
 nnoremap <leader>ev :e $MYVIMRC<CR>
 autocmd BufWritePost .vimrc source $MYVIMRC
 
-set t_Co=256
-set background=dark
-colorscheme gruvbox
+" COLOUR SCHEME
+set termguicolors
+if exists('+termguicolors')
+        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+            let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+        endif
+        let g:gruvbox_invert_selection='0'
 
-"Cursor Appearance
+colorscheme gruvbox
+set background=dark
+
+" Cursor Appearance
 if has("autocmd")
     au VimEnter,InsertLeave * silent execute '!echo -ne "\e[2 q"' | redraw!
     au InsertEnter,InsertChange *
-    \ if v:insertmode == 'i' | 
+    \ if v:insertmode == 'i' |
         \   silent execute '!echo -ne "\e[6 q"' | redraw! |
     \ elseif v:insertmode == 'r' |
     \   silent execute '!echo -ne "\e[4 q"' | redraw! |
@@ -128,18 +163,14 @@ nnoremap <Leader>f :Ack!
 
 " auto close quickfix window after selecting an item
 :autocmd FileType qf nnoremap <buffer> <CR> <CR>:cclose<CR>
-      
-" CtrlP open in MRU mode by default
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlPMRUFiles'
 
-" CtrlP remaps
-nmap <leader>. <c-p><c-\>f
-nmap <c-b> :CtrlPBuffer<cr>
+" FZF remaps
+nmap <c-b> :Buffers<cr>
+nmap <c-p> :History<cr>
+nmap <c-g> :GitFiles?<cr>
+autocmd! FileType fzf tnoremap <buffer> <esc> <c-c>
 
-" Terminal mode
-
-" COC RECOMMENDED THINGS. 
+" COC RECOMMENDED THINGS.
 
 " TextEdit might fail if hidden is not set.
 set hidden
@@ -207,6 +238,9 @@ if has("patch-8.1.1564")
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
+  nmap <silent> gh :CocCommand clangd.switchSourceHeader <CR>
+  nmap <silent> gs :CocCommand clangd.symbolInfo <CR>
+  nmap <leader> e  :CocDiagnostics <CR>
 
   " Use K to show documentation in preview window.
   nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -226,8 +260,8 @@ if has("patch-8.1.1564")
                 nmap <leader>rn <Plug>(coc-rename)
 
   " Formatting selected code.
-  xmap <leader>f  <Plug>(coc-format-selected)
-  nmap <leader>f  <Plug>(coc-format-selected)
+  xmap <leader>fo  <Plug>(coc-format-selected)
+  nmap <leader>fo  <Plug>(coc-format-selected)
 
   augroup mygroup
     autocmd!
@@ -240,7 +274,6 @@ if has("patch-8.1.1564")
             " Applying codeAction to the selected region.
             " Example: `<leader>aap` for current paragraph
             xmap <leader>a  <Plug>(coc-codeaction-selected)
-  nmap <leader>a  <Plug>(coc-codeaction-selected)
 
   " Remap keys for applying codeAction to the current buffer.
   nmap <leader>ac  <Plug>(coc-codeaction)
